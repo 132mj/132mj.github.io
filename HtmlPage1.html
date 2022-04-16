@@ -1,0 +1,153 @@
+﻿<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>
+        Intro to MapView - Create a 2D map | Sample | ArcGIS API for JavaScript
+        4.23
+    </title>
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 97%;
+            width: 94%;
+        }
+
+        .yemeiDiv {
+            box-sizing: border-box;
+            height: 30px;
+            width: 112%;
+            background-color: beige;
+            font-size: 29px;
+            color: gray;
+            /*padding-left: 20px;*/
+        }
+
+        #basemapGalleryDiv {
+            position: absolute;
+            top: 70px;
+            left: 84%;
+            height: 100%;
+            width: 240px;
+            z-index: 1;
+        }
+    </style>
+
+    <link rel="stylesheet"
+          href="https://js.arcgis.com/4.23/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.23/"></script>
+
+    <script>
+      require(["esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/Legend",
+      "esri/widgets/ScaleBar",
+      "esri/widgets/Expand",
+      "esri/widgets/Print",
+      "esri/widgets/BasemapGallery",
+      "esri/widgets/Search",
+      "esri/widgets/LayerList"
+      ],
+      (Map,
+      MapView,
+      FeatureLayer,
+      Legend,
+      ScaleBar,
+      Expand,
+      Print,
+      BasemapGallery,
+      Search,
+      LayerList) => {
+
+        const layer = new FeatureLayer({
+        url: "https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/NDFD_Precipitation_v1/FeatureServer"
+        });
+
+        const map = new Map({
+          basemap: "topo-vector",
+          layers:[layer]
+
+        });
+
+        const view = new MapView({
+          container: "viewDiv",
+          map: map,
+          zoom: 2,
+          center: [260, 40] // longitude, latitude
+        });
+
+        let scaleBar = new ScaleBar({
+          view: view,
+          style:"ruler",
+          unit:"metric"
+          });
+
+        let basemapGallery = new BasemapGallery(
+          {
+            view: view,
+            container: basemapGalleryDiv
+          }
+        );
+
+
+        let legend = new Legend({
+          view: view,
+          layerInfos:[{
+            layer:layer,
+            title:"预计降水量",
+
+          }]
+        });
+
+        const print = new Print({
+          view: view,
+          printServiceUrl:
+          "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+        });
+
+        const search = new Search({
+                view: view
+            });
+            // Adds the search widget below other elements in
+            // the top left corner of the view
+        const layerList = new LayerList({
+          view: view
+        });
+
+        let laexpand = new Expand({
+          view: view,
+          content: layerList,
+          expanded: false
+        });
+
+        let prexpand = new Expand({
+          view: view,
+          content: print
+        });
+
+
+
+        view.ui.add(search, "top-right");
+        view.ui.add(laexpand, "top-right");
+        view.ui.add(legend, "bottom-left");
+        view.ui.add(scaleBar, "bottom-left");
+        view.ui.add(prexpand, "top-left");
+        });
+
+    </script>
+</head>
+
+<body>
+    <div id="basemapGalleryDiv"></div>
+    <div class="yemeiDiv">
+        <b>美国大陆降水预报</b>
+    </div>
+    <div id="viewDiv"></div>
+
+</body>
+</html>
